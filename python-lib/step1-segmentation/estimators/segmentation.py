@@ -15,15 +15,16 @@ sys.path.insert(0,'../models/')
 from network import *
 from network_ops import *
 
+patientName = sys.argv[1];
 
 if __name__ == "__main__":
     # Set Environment
     conf = conf()
 
-    save_dir = os.path.join(conf.output_dir, conf.run_name, 'predictions{}'.format(time.strftime("%Y%m%d_%H%M%S")))
+    save_dir = os.path.join(conf.output_dir, patientName)
     if os.path.exists(save_dir):
         shutil.rmtree(save_dir)
-    os.makedirs(save_dir)
+
     # If prediction to be made on saving criteria for best class of the model. Here the 
     # classes are 1,2,3 for RV, MYO and LV.
 
@@ -33,12 +34,12 @@ if __name__ == "__main__":
     models = ['best_model_class2/latest.ckpt']
 
     for model in models:   
-        saved_model_dir = os.path.join(save_dir, model.split('/')[0]) 
+        saved_model_dir = save_dir
         os.makedirs(saved_model_dir)
 
         print(os.path.join(conf.output_dir, conf.run_name, model))
 
-        model_path = os.path.join(conf.output_dir, conf.run_name, model)
+        model_path = os.path.join(conf.model_dir, conf.run_name, model)
         # gt_available=False -> Implies Ground Truth available for benchmarking on validation or test set
         # Then the metrics reported in the paper are calculated
         gt_available = False
@@ -53,7 +54,6 @@ if __name__ == "__main__":
         targets = tf.placeholder(tf.uint8, shape = (None, None, None))
         weight_maps = tf.placeholder(tf.float32, shape=[None, None, None])
         batch_class_weights = tf.placeholder(tf.float32)
-
 
         # define the network
         print('Defining the network', conf.run_name)
@@ -98,15 +98,14 @@ if __name__ == "__main__":
         for test_data in final_test_data_path:
             base_folder = os.path.basename(test_data)
             print("test_data : %s" % test_data)
-            patient_folders = next(os.walk(test_data))[1]   
-            patient_folders = sorted(patient_folders, key=lambda x: re.findall('\d+', x))
-            for patient in patient_folders:
-                os.makedirs(os.path.join(saved_model_dir, base_folder, patient))
+            patient_folders = [patientName]
+
+            print(patient_folders)
             for i in range(len(patient_folders)):
                 print("\n-----------------------------------------------------------------------")
                 print("Working on " + patient_folders[i])
                 # if patient_folders[i] == 'patient147':
-                patient_data = get_test_data_acdc(test_data, patient_folders[i], 
+                patient_data = get_test_data_acdc(test_data, patient_folders[i],
                                                 gt_available=gt_available)
                 # print (img_file_list[0])
                 print("-----------------------------------------------------------------------\n")
@@ -118,7 +117,7 @@ if __name__ == "__main__":
                                         # postProcessList = ['glcc', 'glcc_2D'],
                                         crf = None,
                                         patch_size=(128, 128),
-                                        save_path = os.path.join(saved_model_dir, base_folder, patient_folders[i])
+                                        save_path = saved_model_dir
                                         )
                 print("Time taken for Prediction: " + str(time.time()-i_time) + 's')
                 print("\n")

@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class CardiacRendererApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(CardiacRendererApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(CardiacRendererApplication.class, args);
+    }
 
 }

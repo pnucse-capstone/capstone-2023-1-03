@@ -7,6 +7,7 @@ sys.path.append("../")
 # Custom
 from utils_heart import * 
 
+patientName = sys.argv[1];
 
 HEADER = ["Name", "ED[vol(LV)]", "ES[vol(LV)]", "ED[vol(RV)]", "ES[vol(RV)]",
           "ED[mass(MYO)]", "ES[vol(MYO)]", "EF(LV)", "EF(RV)", "ED[vol(LV)/vol(RV)]", "ES[vol(LV)/vol(RV)]", "ED[mass(MYO)/vol(LV)]", "ES[vol(MYO)/vol(LV)]",
@@ -86,13 +87,14 @@ def calculate_metrics_from_pred(data_path, pred_name='prediction'):
             res.append(r) 
         # break
     df = pd.DataFrame(res, columns=HEADER[:len(HEADER)])
-    if not os.path.exists('./prediction_data'):
-        os.makedirs('./prediction_data')
-    df.to_csv("./prediction_data/Cardiac_parameters_{}.csv".format(pred_name), index=False)
+    if not os.path.exists('../step2-feature-extraction-res'):
+        os.makedirs('../step2-feature-extraction-res')
+    df.to_csv("../step2-feature-extraction-res/{}.csv".format(patientName), index=False)
 
 if __name__ == '__main__':
     # Data directories:
     # Path to final test set segmentation results of ACDC 2017 challenge
     # test_prediction_path = '../../ACDC_DataSet/ACDC_17_TestSegmentationResults'
-    test_prediction_path = '../trained_models/ACDC/FCRD_ACDC/predictions20230813_143007/best_model_class2/cardiac-data/patient102/'
+    test_prediction_path = '../step1-segmentation-res/{}'.format(patientName)
+    print(test_prediction_path)
     calculate_metrics_from_pred(test_prediction_path, pred_name='minmax_k_16')

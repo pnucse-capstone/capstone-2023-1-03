@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import skimage
 from skimage import feature
 from scipy import spatial
-from helpers import utils
+#from helpers import utils
 #from loaders import data_augmentation
 
 def heart_metrics(seg_3Dmap, voxel_size, classes=[3, 1, 2]):

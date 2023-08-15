@@ -5,7 +5,8 @@ import os
 class conf(object):
 	def __init__(self,
 				data_path = '../../processed_acdc_dataset/hdf5_files',
-				output_dir = '../../trained_models/ACDC',
+				model_dir = '../../trained_models/ACDC',
+				output_dir = '../../step1-segmentation-res',
 				run_name = 'FCRD_ACDC',
 				batch_size = 16,
 				num_class = 4,
@@ -20,6 +21,7 @@ class conf(object):
 				):
 
 		self.data_path = data_path
+		self.model_dir = model_dir
 		self.output_dir = output_dir
 		self.run_name = run_name
 		self.batch_size = batch_size

@@ -32,6 +32,8 @@ from sklearn.neighbors import KNeighborsClassifier
 
 sys.path.append("../")
 
+patientName = sys.argv[1];
+
 # Disease Mapping
 NOR = 'NOR'
 # 30 patients with previous myocardial infarction
@@ -57,7 +59,7 @@ train = './training_data/Cardiac_parameters_train.csv'
 validation = './training_data/Cardiac_parameters_validation.csv'
 
 # Path to cardiac features generated from segmentations predicted by the segmentation network
-test_on_prediction = './prediction_data/Cardiac_parameters_prediction.csv'
+test_on_prediction = '../step2-feature-extraction-res/{}.csv'.format(patientName)
 
 # test_on_prediction = './prediction_data/Cardiac_parameters_minmax_k_16.csv'
 
@@ -91,7 +93,7 @@ def CardiacDiagnosisModelTester(clf, final_test_path, name, scaler, save_dir='./
     X_scaled = scaler.transform(X_df)  
     y_pred = clf.predict(X_scaled)
     print ("Writing predictions to file", name)
-    target = open(save_dir+'/'+ name+'predictions_{}.txt'.format(time.strftime("%Y%m%d_%H%M%S")), 'w')
+    target = open(save_dir + '/{}.txt'.format(patientName), 'w')
     classes = {NOR: 0,MINF:0,DCM:0,HCM:0,RV:0}
     for pid, pred in zip(df['Name'], y_pred):
         classes[class_names[pred]] +=1
@@ -111,9 +113,13 @@ def CardiacDiagnosisModelTester(clf, final_test_path, name, scaler, save_dir='./
             df.to_csv(prediction_csv,  index=False)
 
 if __name__ == '__main__':
-    save_dir ='./Stage_1_Predictions_cohang'
-    EN_clf = joblib.load(save_dir+'/model.pkl')
-    scaler = joblib.load(save_dir+'/scaler.pkl')
+    save_dir ='../step3-classification-res'
+
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+
+    EN_clf = joblib.load('./model.pkl')
+    scaler = joblib.load('./scaler.pkl')
     ##################### Automated Caridiac Diagnosis on Final Test data ########################### 
     # No Group/label is available in final test dataset 
     CardiacDiagnosisModelTester(EN_clf, test_on_prediction, name='EnsembleOnFinalTestSet', scaler=scaler,  save_dir=save_dir, label_available=False, prediction_csv=test_on_prediction)
