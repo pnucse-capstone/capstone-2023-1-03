@@ -12,14 +12,14 @@ public class ClassificationService {
     @Value("${python.lib.path}")
     private String pythonLibPath;
 
-    public void classification() {
+    public void classification(String patientNumber) {
         try {
             String classificationPath = pythonLibPath + "/step3-classification/classification.py";
             log.info("classification ... classificationPath : {}", classificationPath);
 
             Runtime runtime = Runtime.getRuntime();
 
-            Process process = runtime.exec("python " + classificationPath, null, new File(pythonLibPath + "/step3-classification"));
+            Process process = runtime.exec("python " + classificationPath + " " + patientNumber, null, new File(pythonLibPath + "/step3-classification"));
             InputStream is = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);

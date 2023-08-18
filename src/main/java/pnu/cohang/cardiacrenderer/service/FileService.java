@@ -2,8 +2,10 @@ package pnu.cohang.cardiacrenderer.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import pnu.cohang.cardiacrenderer.model.FileResource;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +24,13 @@ public class FileService {
     @Value("${cardiac.mri.data.path}")
     private String cardiacDataPath;
 
+    public FileResource getNiiFile(String patientNumber) throws FileNotFoundException {
+        File downloadFile = new File(cardiacDataPath + "/" + patientNumber + "/" + patientNumber + "_4d.nii.gz");
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(downloadFile));
+
+        return new FileResource(downloadFile, resource);
+    }
+
     public void unzipFile(String fileName) {
         Path sourceZip = Paths.get(cardiacDataPath + "/" + fileName);
         Path targetDir = Paths.get(cardiacDataPath);
@@ -29,11 +38,9 @@ public class FileService {
         try (ZipInputStream zis = new ZipInputStream(new FileInputStream(sourceZip.toFile()))) {
             ZipEntry zipEntry = zis.getNextEntry();
             while (zipEntry != null) {
-                boolean isDirectory = false;
-                if (zipEntry.getName().endsWith(File.separator)) {
-                    isDirectory = true;
-                }
+                boolean isDirectory = zipEntry.getName().endsWith(File.separator);
                 Path newPath = zipSlipProtect(zipEntry, targetDir);
+
                 if (isDirectory) {
                     Files.createDirectories(newPath);
                 } else {

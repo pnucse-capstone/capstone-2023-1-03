@@ -12,14 +12,14 @@ public class FeatureExtractionService {
     @Value("${python.lib.path}")
     private String pythonLibPath;
 
-    public void featureExtraction() {
+    public void featureExtraction(String patientNumber) {
         try {
             String featureExtractionPath = pythonLibPath + "/step2-feature-extraction/feature_extraction.py";
             log.info("feature-extraction ... featureExtractionPath : {}", featureExtractionPath);
 
             Runtime runtime = Runtime.getRuntime();
 
-            Process process = runtime.exec("python " + featureExtractionPath, null, new File(pythonLibPath + "/step2-feature-extraction"));
+            Process process = runtime.exec("python " + featureExtractionPath + " " + patientNumber, null, new File(pythonLibPath + "/step2-feature-extraction"));
             InputStream is = process.getInputStream();
             InputStreamReader isr = new InputStreamReader(is);
             BufferedReader br = new BufferedReader(isr);
