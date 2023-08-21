@@ -15,24 +15,25 @@ function App() {
     let timer = null;
 
     const test = async () => {
-       const res = await axios({
-           // url: "/api/v1/cardiac/download/patient119", //your url
-           url: "https://niivue.github.io/niivue-demo-images/mni152.nii.gz", //your url
-           method: 'GET',
-           // responseType: 'blob', // important
-       })
+        const res1 = await fetch("https://niivue.github.io/niivue-demo-images/mni152.nii.gz")
 
-       const dataURL = await blobToDataUrl(res.data);
+        console.log("res git", res1.arrayBuffer());
 
-       console.log(dataURL);
+        const res2 = await fetch("/api/v1/cardiac/download/patient102");
 
-        setData(dataURL);
+        console.log("res localserver", res2.arrayBuffer());
+
+       // const dataURL = await blobToDataUrl(res.data);
+       //
+       // console.log(dataURL);
+       //
+       //  setData(dataURL);
     }
 
-    // if(!isInit) {
-    //     test();
-    //     isInit = true;
-    // }
+    if(!isInit) {
+        test();
+        isInit = true;
+    }
 
 
   return (

@@ -67,9 +67,9 @@ public class CardiacMriController {
 //        header.add(HttpHeaders.CONTENT_ENCODING, "gzip");
         header.add(HttpHeaders.CONNECTION, "keep-alive");
         header.add(HttpHeaders.ACCEPT_RANGES, "bytes");
-        header.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
+//        header.add(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*");
 //        header.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + resource.getFile().getName());
-        header.add("Cache-Control", "max-age=600");
+//        header.add("Cache-Control", "max-age=600");
 //        header.add("Pragma", "no-cache");
 //        header.add("Expires", "0");
 

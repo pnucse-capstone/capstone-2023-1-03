@@ -1,5 +1,5 @@
 import { useRef, useEffect } from "react";
-import { Niivue } from "@niivue/niivue";
+import { Niivue, NVImage } from "@niivue/niivue";
 
 const nv = new Niivue();
 export const NiiViewer = ({ imageUrl, frame }) => {
@@ -10,7 +10,8 @@ export const NiiViewer = ({ imageUrl, frame }) => {
             {
                 // url: "/patient119_4d.nii.gz",
                 // url: "https://niivue.github.io/niivue-demo-images/mni152.nii.gz",
-                url: "/api/v1/cardiac/download/patient119",
+                url: "/api/v1/cardiac/download/patient102?test=patient102.nii.gz",
+                name: "main.nii.gz",
                 frame4D: 0
             },
             // {
@@ -22,7 +23,6 @@ export const NiiViewer = ({ imageUrl, frame }) => {
 
         nv.attachToCanvas(canvas.current);
         nv.loadVolumes(volumeList);
-        // nv.
     }, [imageUrl]);
 
     useEffect(() => {
@@ -33,6 +33,8 @@ export const NiiViewer = ({ imageUrl, frame }) => {
         for(const volume of nv.volumes) {
             nv.setFrame4D(volume.id, modFrame);
         }
+
+        console.log("frame", modFrame);
     }, [frame]);
 
     return <canvas ref={canvas} height={480} width={640} />;
