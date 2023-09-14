@@ -2,28 +2,45 @@ import { useRef, useEffect } from "react";
 import { Niivue, NVImage } from "@niivue/niivue";
 
 const nv = new Niivue();
-export const NiiViewer = ({ imageUrl, frame }) => {
+export const NiiViewer = ({ patientNumber, frame, class1Opacity, class2Opacity, class3Opacity }) => {
     const canvas = useRef();
 
     useEffect(() => {
         const volumeList = [
             {
-                // url: "/patient119_4d.nii.gz",
-                // url: "https://niivue.github.io/niivue-demo-images/mni152.nii.gz",
-                url: "/api/v1/cardiac/download/patient102?test=patient102.nii.gz",
+                url: `/api/v1/cardiac/download-origin/${patientNumber}`,
                 name: "main.nii.gz",
                 frame4D: 0
             },
-            // {
-            //     url: "/patient101_4D_seg.nii",
-            //     frame4D: 0,
-            //     colorMap: "cool"
-            // },
+            { //RV
+                url: `/api/v1/cardiac/download-segmentation/${patientNumber}/class1`,
+                frame4D: 0,
+                name: "class1.nii",
+                colorMap: "red",
+                cal_max: 3,
+                opacity: 0
+            },
+            { //MYO
+                url: `/api/v1/cardiac/download-segmentation/${patientNumber}/class2`,
+                frame4D: 0,
+                name: "class2.nii",
+                colorMap: "green",
+                cal_max: 3,
+                opacity: 0
+            },
+            { //LV
+                url: `/api/v1/cardiac/download-segmentation/${patientNumber}/class3`,
+                frame4D: 0,
+                name: "class3.nii",
+                colorMap: "blue",
+                cal_max: 3,
+                opacity: 0
+            },
         ];
 
         nv.attachToCanvas(canvas.current);
         nv.loadVolumes(volumeList);
-    }, [imageUrl]);
+    }, [patientNumber]);
 
     useEffect(() => {
         if(!nv.volumes[1]) return;
@@ -37,5 +54,23 @@ export const NiiViewer = ({ imageUrl, frame }) => {
         console.log("frame", modFrame);
     }, [frame]);
 
-    return <canvas ref={canvas} height={480} width={640} />;
+    useEffect(() => {
+        if(!nv.volumes[1]) return;
+
+        nv.setOpacity(1, class1Opacity);
+    }, [class1Opacity]);
+
+    useEffect(() => {
+        if(!nv.volumes[2]) return;
+
+        nv.setOpacity(2, class2Opacity);
+    }, [class2Opacity]);
+
+    useEffect(() => {
+        if(!nv.volumes[3]) return;
+
+        nv.setOpacity(3, class3Opacity);
+    }, [class3Opacity]);
+
+    return <canvas ref={canvas}/>;
 };

@@ -15,7 +15,7 @@ sys.path.insert(0,'../models/')
 from network import *
 from network_ops import *
 
-patientName = sys.argv[1];
+patientName = sys.argv[1]
 
 if __name__ == "__main__":
     # Set Environment
@@ -42,7 +42,7 @@ if __name__ == "__main__":
         model_path = os.path.join(conf.model_dir, conf.run_name, model)
         # gt_available=False -> Implies Ground Truth available for benchmarking on validation or test set
         # Then the metrics reported in the paper are calculated
-        gt_available = False
+        gt_available = True
         # final_test_data_path = ['../../processed_acdc_dataset/dataset/test_set',
         #                         '../../processed_acdc_dataset/dataset/validation_set']
 
@@ -123,7 +123,6 @@ if __name__ == "__main__":
                 print("\n")
                 results.append(result)
                 patients.append(patient_folders[i])
-
 
         tf.reset_default_graph()        
         if gt_available:

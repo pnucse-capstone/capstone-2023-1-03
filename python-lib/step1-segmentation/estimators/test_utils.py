@@ -495,8 +495,13 @@ def get_test_data_acdc(src_path, patient, gt_available=False):
     folder_path = os.path.join(src_path, patient)
     config_file_path = os.path.join(folder_path, 'Info.cfg')
 
+    print(config_file_path)
+
     with open(config_file_path) as f_in:
+        print(f_in)
+
         for line in f_in:
+            print(line)
             l = line.rstrip().split(": ")
             patient_data[l[0]] = l[1]
 
@@ -524,7 +529,6 @@ def get_test_data_acdc(src_path, patient, gt_available=False):
     patient_data['ES_VOL'] = es
     patient_data['3D_affine'] = affine
     patient_data['3D_hdr'] = hdr
-
 
     if gt_available:
         ed_gt, _, _  = load_nii("patient%03d_frame%02d_gt.nii.gz" %(patient_No, ED_frame_No), folder_path)

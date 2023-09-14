@@ -24,8 +24,33 @@ public class FileService {
     @Value("${cardiac.mri.data.path}")
     private String cardiacDataPath;
 
-    public FileResource getNiiFile(String patientNumber) throws FileNotFoundException {
+    @Value("${python.lib.path}")
+    private String pythonLibPath;
+
+    public FileResource getNiiOriginFile(String patientNumber) throws FileNotFoundException {
         File downloadFile = new File(cardiacDataPath + "/" + patientNumber + "/" + patientNumber + "_4d.nii.gz");
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(downloadFile));
+
+        return new FileResource(downloadFile, resource);
+    }
+
+    public FileResource getNiiSegmentationFile(String patientNumber, String classNumber) throws FileNotFoundException {
+        String cardiacSegmentationDataPath = pythonLibPath + "/step1-segmentation-res/" + patientNumber + "/" + patientNumber + "_" + classNumber + ".nii";
+
+        log.info("path : {}", cardiacSegmentationDataPath);
+
+        File downloadFile = new File(cardiacSegmentationDataPath);
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(downloadFile));
+
+        return new FileResource(downloadFile, resource);
+    }
+
+    public FileResource getInfoFile(String patientNumber) throws FileNotFoundException {
+        String infoFilePath = cardiacDataPath + "/" + patientNumber + "/" + "Info.cfg";
+
+        log.info("path : {}", infoFilePath);
+
+        File downloadFile = new File(infoFilePath);
         InputStreamResource resource = new InputStreamResource(new FileInputStream(downloadFile));
 
         return new FileResource(downloadFile, resource);
@@ -71,5 +96,4 @@ public class FileService {
     public void uploadFile(MultipartFile file) throws IOException {
         file.transferTo(new File(cardiacDataPath + "/" + file.getOriginalFilename()));
     }
-
 }

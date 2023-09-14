@@ -7,27 +7,30 @@ sys.path.append("../")
 # Custom
 from utils_heart import * 
 
-patientName = sys.argv[1];
+patientName = sys.argv[1]
+patient_input_path = "../../cardiac-data"
 
 HEADER = ["Name", "ED[vol(LV)]", "ES[vol(LV)]", "ED[vol(RV)]", "ES[vol(RV)]",
           "ED[mass(MYO)]", "ES[vol(MYO)]", "EF(LV)", "EF(RV)", "ED[vol(LV)/vol(RV)]", "ES[vol(LV)/vol(RV)]", "ED[mass(MYO)/vol(LV)]", "ES[vol(MYO)/vol(LV)]",
           "ES[max(mean(MWT|SA)|LA)]", "ES[stdev(mean(MWT|SA)|LA)]", "ES[mean(stdev(MWT|SA)|LA)]", "ES[stdev(stdev(MWT|SA)|LA)]", 
           "ED[max(mean(MWT|SA)|LA)]", "ED[stdev(mean(MWT|SA)|LA)]", "ED[mean(stdev(MWT|SA)|LA)]", "ED[stdev(stdev(MWT|SA)|LA)]", "GROUP"]
 
+HEADER2 = ["Name", "ED[vol(LV)]", "ED[vol(RV)]", 
+           "EF(LV)", "EF(RV)",
+           "ED[max(MTH)]", "GROUP"]
+
+
 def calculate_metrics_from_pred(data_path, pred_name='prediction'):
     pred_files = next(os.walk(data_path))[2]
     print(pred_files)
     res=[]
+    res2=[]
     seen_patient = []
     for patient in sorted(pred_files):
-        m = re.match("patient(\d{3})", patient)
-        patient_No = int(m.group(1))
-        if patient_No not in seen_patient:
-            print (patient)
-            seen_patient.append(patient_No)       
-            # print patient_No
-            ed = "patient%03d_ED.nii" %(patient_No)
-            es = "patient%03d_ES.nii" %(patient_No)
+        if patientName not in seen_patient:
+            seen_patient.append(patientName)
+            ed = "%s_ED.nii" %(patientName)
+            es = "%s_ES.nii" %(patientName)
             # Load data
             ed_data = nib.load(os.path.join(data_path, ed))
             es_data = nib.load(os.path.join(data_path, es))
@@ -54,12 +57,22 @@ def calculate_metrics_from_pred(data_path, pred_name='prediction'):
             # print (es_myo_thickness_max_avg, es_myo_thickness_std_avg, es_myo_thickness_mean_std, es_myo_thickness_std_std,
             #      ed_myo_thickness_max_avg, ed_myo_thickness_std_avg, ed_myo_thickness_std_std, ed_myo_thickness_std_std)
 
+            patient_info = {}
+            info_path = "%s/Info.cfg" %(patientName)
+            with open(os.path.join(patient_input_path, info_path)) as f_in:
+                for line in f_in:
+                    l = line.rstrip().split(": ")
+                    patient_info[l[0]] = l[1]
+
+            bsa_val = bsa(float(patient_info['Height']), float(patient_info['Weight']))
+
+
             heart_param = {'EDV_LV': ed_lv, 'EDV_RV': ed_rv, 'ESV_LV': es_lv, 'ESV_RV': es_rv,
                    'ED_MYO': ed_myo, 'ES_MYO': es_myo, 'EF_LV': ef_lv, 'EF_RV': ef_rv,
                    'ES_MYO_MAX_AVG_T': es_myo_thickness_max_avg, 'ES_MYO_STD_AVG_T': es_myo_thickness_std_avg, 'ES_MYO_AVG_STD_T': es_myo_thickness_mean_std, 'ES_MYO_STD_STD_T': es_myo_thickness_std_std,
                    'ED_MYO_MAX_AVG_T': ed_myo_thickness_max_avg, 'ED_MYO_STD_AVG_T': ed_myo_thickness_std_avg, 'ED_MYO_AVG_STD_T': ed_myo_thickness_mean_std, 'ED_MYO_STD_STD_T': ed_myo_thickness_std_std,}
             r=[]
-            pid = 'patient{:03d}'.format(patient_No)
+            pid = patientName
             r.append(pid)
             r.append(heart_param['EDV_LV'])
             r.append(heart_param['ESV_LV'])
@@ -85,11 +98,33 @@ def calculate_metrics_from_pred(data_path, pred_name='prediction'):
             # Apppend Blank for Stage 1 results to be populated
             r.append('')
             res.append(r) 
+
+
+            r2=[]
+            r2.append(pid)
+            r2.append(heart_param['EDV_LV'] / bsa_val / 1000)
+            r2.append(heart_param['EDV_RV'] / bsa_val / 1000)
+            
+        
+            r2.append(heart_param['EF_LV'])
+            r2.append(heart_param['EF_RV'])
+
+            r2.append(heart_param['ED_MYO_MAX_AVG_T'])
+            # Apppend Blank for Stage 1 results to be populated
+            r2.append('')
+            res2.append(r2)
+
         # break
     df = pd.DataFrame(res, columns=HEADER[:len(HEADER)])
     if not os.path.exists('../step2-feature-extraction-res'):
         os.makedirs('../step2-feature-extraction-res')
     df.to_csv("../step2-feature-extraction-res/{}.csv".format(patientName), index=False)
+
+
+    df = pd.DataFrame(res2, columns=HEADER2[:len(HEADER2)])
+
+    df.to_csv("../step2-feature-extraction-res/{}.csv".format(patientName + "_to_db"), index=False)
+
 
 if __name__ == '__main__':
     # Data directories:

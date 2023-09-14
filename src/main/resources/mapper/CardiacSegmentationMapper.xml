@@ -1,0 +1,42 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pnu.cohang.cardiacrenderer.repository.mapper.CardiacSegmentationMapper">
+    <select id="getDataList" resultType="CardiacSegmentation">
+        select * from cardiac_segmentation
+    </select>
+
+    <select id="getDataFromName" resultType="CardiacSegmentation" parameterType="String">
+        select id,
+               name,
+               ED_vol_LV,
+               ED_vol_RV,
+               EF_LV,
+               EF_RV,
+               ED_max_MTH,
+               disease_group as diseaseGroup
+        from cardiac_segmentation where name = #{patientNumber}
+    </select>
+
+    <insert id="insertData" parameterType="Map">
+        INSERT INTO cardiac_segmentation(id, name, ED_vol_LV, ED_vol_RV, EF_LV, EF_RV, ED_max_MTH, disease_group) VALUES(
+            null,
+            #{data.name},
+            #{data.ED_vol_LV},
+            #{data.ED_vol_RV},
+            #{data.EF_LV},
+            #{data.EF_RV},
+            #{data.ED_max_MTH},
+            #{data.diseaseGroup}
+        )
+    </insert>
+
+    <update id="updateData" parameterType="Map">
+        update cardiac_segmentation
+        set ED_vol_LV = #{data.ED_vol_LV},
+            ED_vol_RV = #{data.ED_vol_RV},
+            EF_LV = #{data.EF_LV},
+            EF_RV = #{data.EF_RV},
+            ED_max_MTH = #{data.ED_max_MTH},
+            disease_group = #{data.diseaseGroup}
+        where name = #{data.name}
+    </update>
+</mapper>
