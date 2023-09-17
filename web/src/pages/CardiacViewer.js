@@ -1,11 +1,13 @@
-import {useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import {NiiViewer} from "../NiiViewer";
-import {useEffect, useState} from "react";
-import {Card, CardContent, Slider, Switch, Typography} from "@mui/material";
+import React, {useEffect, useState} from "react";
+import {Card, CardContent, IconButton, List, ListItem, ListItemText, Slider, Switch, Typography} from "@mui/material";
 
 import axios from "axios";
+import {ViewInAr} from "@mui/icons-material";
 
 function CardiacViewer() {
+    const navigate = useNavigate();
     let { patientNumber} = useParams();
 
     const [frame, setFrame] = useState(1);
@@ -16,6 +18,16 @@ function CardiacViewer() {
 
     const [patientInfo, setPatientInfo] = useState(null);
     const [classificationInfo, setClassificationInfo] = useState(null);
+
+    const [data, setData] = useState([]);
+
+    const getData = async () => {
+        const res = await axios.get("/api/v1/data");
+
+        setData(res.data);
+
+        console.log("res.data", res.data)
+    }
 
     const getInfoFile = async () => {
         const res = await axios.get(`/api/v1/cardiac/download-info/${patientNumber}`)
@@ -46,9 +58,40 @@ function CardiacViewer() {
     useEffect( () => {
         getInfoFile();
         getClassificationInfo();
-    }, []);
+        getData();
+    }, [patientNumber]);
 
     const info = classificationInfo;
+
+    const patientWithCondition = data.map((d) => {
+        if(d.diseaseGroup === classificationInfo.diseaseGroup)
+            return d;
+
+        return null;
+    });
+
+    const listItems = patientWithCondition.map((d) => {
+        if(d === null)
+            return;
+
+        return(
+            <Card style={{marginBottom: 5}}>
+                <ListItem
+                    secondaryAction={
+                        <IconButton edge="end" aria-label="view" onClick={() => {
+                            navigate(`/viewer/${d.name}`);
+                        }}>
+                            <ViewInAr />
+                        </IconButton>
+                    }
+                >
+                    <ListItemText
+                        primary={d.name}
+                        secondary={`group: ${d.diseaseGroup}`}
+                    />
+                </ListItem>
+            </Card>
+        )});
 
     return (
         <div style={{height: "100vh", display: "flex"}}>
@@ -243,6 +286,12 @@ function CardiacViewer() {
                 }
             </div>
             }
+            <div style={{width: "15vw", paddingTop: 10, paddingLeft: 5, paddingRight: 5, height: "100vh", overflow: "scroll"}}>
+                <Typography>Patient with the same disease group</Typography>
+                <List>
+                    {listItems}
+                </List>
+            </div>
         </div>
     )
 }
