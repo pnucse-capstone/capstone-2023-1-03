@@ -42,7 +42,7 @@ if __name__ == "__main__":
         model_path = os.path.join(conf.model_dir, conf.run_name, model)
         # gt_available=False -> Implies Ground Truth available for benchmarking on validation or test set
         # Then the metrics reported in the paper are calculated
-        gt_available = True
+        gt_available = False
         # final_test_data_path = ['../../processed_acdc_dataset/dataset/test_set',
         #                         '../../processed_acdc_dataset/dataset/validation_set']
 

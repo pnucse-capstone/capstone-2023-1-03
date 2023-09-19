@@ -18,7 +18,7 @@ export const NiiViewer = ({ patientNumber, frame, class1Opacity, class2Opacity, 
                 name: "class1.nii",
                 colorMap: "red",
                 cal_max: 3,
-                opacity: 0
+                opacity: class1Opacity
             },
             { //MYO
                 url: `/api/v1/cardiac/download-segmentation/${patientNumber}/class2`,
@@ -26,7 +26,7 @@ export const NiiViewer = ({ patientNumber, frame, class1Opacity, class2Opacity, 
                 name: "class2.nii",
                 colorMap: "green",
                 cal_max: 3,
-                opacity: 0
+                opacity: class2Opacity
             },
             { //LV
                 url: `/api/v1/cardiac/download-segmentation/${patientNumber}/class3`,
@@ -34,7 +34,7 @@ export const NiiViewer = ({ patientNumber, frame, class1Opacity, class2Opacity, 
                 name: "class3.nii",
                 colorMap: "blue",
                 cal_max: 3,
-                opacity: 0
+                opacity: class3Opacity
             },
         ];
 
@@ -50,8 +50,6 @@ export const NiiViewer = ({ patientNumber, frame, class1Opacity, class2Opacity, 
         for(const volume of nv.volumes) {
             nv.setFrame4D(volume.id, modFrame);
         }
-
-        console.log("frame", modFrame);
     }, [frame]);
 
     useEffect(() => {

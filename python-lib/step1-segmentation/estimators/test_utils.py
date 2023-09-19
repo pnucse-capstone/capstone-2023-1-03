@@ -394,35 +394,41 @@ class Tester(object):
         suffix = '4D'
         seg_4D = np.swapaxes(seg_4D, 0, 1)
         save_nii(seg_4D, patient_data['4D_affine'], patient_data['4D_hdr'], save_path, prefix, suffix)
+        print("save seg_4D fin")
+
         suffix = 'ED'
         ED_phase_n = int(patient_data['ED'])
         ED_pred = seg_4D[:,:,:,ED_phase_n]
         save_nii(ED_pred, patient_data['3D_affine'], patient_data['3D_hdr'], save_path, prefix, suffix)
+        print("save ED fin")
 
         suffix = 'ES'
         ES_phase_n = int(patient_data['ES'])
         ES_pred = seg_4D[:,:,:,ES_phase_n]
         save_nii(ES_pred, patient_data['3D_affine'], patient_data['3D_hdr'], save_path, prefix, suffix)
+        print("save ES fin")
 
-        ED_GT = patient_data.get('ED_GT', None)
-        results = []
-        if ED_GT is not None:
-            quality = computeQualityMeasures(ED_pred.T, ED_GT.T, class_label=1)     
-            results.extend(quality.values())    
-            quality = computeQualityMeasures(ED_pred.T, ED_GT.T, class_label=2)
-            results.extend(quality.values())
-            quality = computeQualityMeasures(ED_pred.T, ED_GT.T, class_label=3)
-            results.extend(quality.values())
-        ES_GT = patient_data.get('ES_GT', None)
-        if ES_GT is not None:
-            quality = computeQualityMeasures(ES_pred.T, ES_GT.T, class_label=1)
-            results.extend(quality.values())
-            quality = computeQualityMeasures(ES_pred.T, ES_GT.T, class_label=2)
-            results.extend(quality.values())
-            quality = computeQualityMeasures(ES_pred.T, ES_GT.T, class_label=3)
-            results.extend(quality.values())
-        print (results)
-        return results
+        print("test ED_GT start")
+
+        #ED_GT = patient_data.get('ED_GT', None)
+        #results = []
+        #if ED_GT is not None:
+        #    quality = computeQualityMeasures(ED_pred.T, ED_GT.T, class_label=1)
+        #    results.extend(quality.values())
+        #    quality = computeQualityMeasures(ED_pred.T, ED_GT.T, class_label=2)
+        #    results.extend(quality.values())
+        #    quality = computeQualityMeasures(ED_pred.T, ED_GT.T, class_label=3)
+        #    results.extend(quality.values())
+        #ES_GT = patient_data.get('ES_GT', None)
+        #if ES_GT is not None:
+        #    quality = computeQualityMeasures(ES_pred.T, ES_GT.T, class_label=1)
+        #    results.extend(quality.values())
+        #    quality = computeQualityMeasures(ES_pred.T, ES_GT.T, class_label=2)
+        #    results.extend(quality.values())
+        #    quality = computeQualityMeasures(ES_pred.T, ES_GT.T, class_label=3)
+        #    results.extend(quality.values())
+        #print (results)
+        return []
         
     def LoadAndPredict(self, patient_data=None, img_files_path_list=None, seg_files_path_list=None, roi_mask_path = None, 
                         patch_size=(128, 128), outputs_shape = None, preProcessList=[], 

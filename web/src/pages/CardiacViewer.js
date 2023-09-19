@@ -112,12 +112,6 @@ function CardiacViewer() {
                             Patient Info
                         </Typography>
                         <Typography>
-                            ED : {patientInfo.ED}
-                        </Typography>
-                        <Typography>
-                            ES : {patientInfo.ES}
-                        </Typography>
-                        <Typography>
                             Height : {patientInfo.height}
                         </Typography>
                         <Typography>
@@ -287,7 +281,7 @@ function CardiacViewer() {
             </div>
             }
             <div style={{width: "15vw", paddingTop: 10, paddingLeft: 5, paddingRight: 5, height: "100vh", overflow: "scroll"}}>
-                <Typography>Patient with the same disease group</Typography>
+                <Typography>Same disease group</Typography>
                 <List>
                     {listItems}
                 </List>
