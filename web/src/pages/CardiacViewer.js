@@ -4,7 +4,7 @@ import React, {useEffect, useState} from "react";
 import {Card, CardContent, IconButton, List, ListItem, ListItemText, Slider, Switch, Typography} from "@mui/material";
 
 import axios from "axios";
-import {ViewInAr} from "@mui/icons-material";
+import {Home, ViewInAr} from "@mui/icons-material";
 
 function CardiacViewer() {
     const navigate = useNavigate();
@@ -59,6 +59,8 @@ function CardiacViewer() {
         getInfoFile();
         getClassificationInfo();
         getData();
+
+        setFrame(1);
     }, [patientNumber]);
 
     const info = classificationInfo;
@@ -108,9 +110,15 @@ function CardiacViewer() {
             <div style={{width: "15vw", paddingTop: 10, paddingLeft: 5}}>
                 <Card>
                     <CardContent>
-                        <Typography variant="h6" component="h2">
-                            Patient Info
-                        </Typography>
+                        <div style={{display: "flex", justifyContent: "space-between"}}>
+                            <Typography variant="h6" component="h2">
+                                Patient Info
+                            </Typography>
+
+                            <IconButton onClick={() => navigate(`/`)}>
+                                <Home />
+                            </IconButton>
+                        </div>
                         <Typography>
                             Height : {patientInfo.height}
                         </Typography>

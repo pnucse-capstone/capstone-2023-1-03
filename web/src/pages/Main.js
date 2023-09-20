@@ -1,11 +1,11 @@
-import React, {useEffect, useMemo, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {FileUploader} from "react-drag-drop-files";
 import {
-    Autocomplete, Avatar, Card, FormControl,
+    Card, FormControl,
     IconButton,
     InputBase,
     InputLabel,
-    LinearProgress, List, ListItem, ListItemAvatar, ListItemText, MenuItem,
+    LinearProgress, List, ListItem, ListItemText, MenuItem,
     Paper, Select,
     TextField,
     Typography
@@ -32,6 +32,7 @@ function Main() {
     const [leftOperand, setLeftOperand] = useState("");
     const [operator, setOperator] = useState(">");
     const [rightOperand, setRightOperand] = useState("");
+    const [searchText, setSearchText] = useState("");
 
     const getData = async () => {
         const res = await axios.get("/api/v1/data");
@@ -80,7 +81,13 @@ function Main() {
         navigate(`/viewer/${patientNumber}`);
     };
 
-    const patientNames = useMemo(() => data.map((d) => d.name), [data]);
+    const patientWithSearch = data.map((d) => {
+        if(d.name.includes(searchText) || d.diseaseGroup.includes(searchText))
+            return d;
+
+        return null;
+    });
+
     const patientWithCondition = data.map((d) => {
          if(operator === ">" && d[leftOperand] > rightOperand)
              return d;
@@ -91,9 +98,32 @@ function Main() {
         return null;
     });
 
+    const listItemsWithSearch = patientWithSearch.map((d) => {
+        if(d === null)
+            return <div/>;
+
+        return(
+            <Card style={{marginBottom: 5, background:"#2a2d3a"}}>
+                <ListItem
+                    secondaryAction={
+                        <IconButton edge="end" aria-label="view" onClick={() => {
+                            navigate(`/viewer/${d.name}`);
+                        }}>
+                            <ViewInAr />
+                        </IconButton>
+                    }
+                >
+                    <ListItemText
+                        primary={d.name}
+                        secondary={`group: ${d.diseaseGroup}`}
+                    />
+                </ListItem>
+            </Card>
+        )});
+
     const listItems = patientWithCondition.map((d) => {
         if(d === null)
-            return;
+            return <div/>;
 
         let conditionText = "";
 
@@ -153,11 +183,12 @@ function Main() {
                                 <InputBase
                                     sx={{ ml: 1, flex: 1 }}
 
-                                    placeholder="Search patient number"
+                                    placeholder="Search patient number or disease group"
                                     inputProps={{ 'aria-label': 'Search patient number' }}
+                                    onChange={(e) => setSearchText(e.target.value)}
                                 />
                                 <IconButton type="button" sx={{ p: '10px' }} aria-label="search">
-                                    <SearchIcon style={{ color: 'white' }}  />
+                                    <SearchIcon style={{ color: 'white' }} />
                                 </IconButton>
                             </Paper>
 
@@ -196,6 +227,12 @@ function Main() {
                                     }
                                 }} value={rightOperand} onChange={(e) => setRightOperand(e.target.value)}></TextField>
                             </div>
+
+                            {searchText.length > 0 &&
+                                <List>
+                                    {listItemsWithSearch}
+                                </List>
+                            }
 
                             {rightOperand.length > 0 &&
                                 <List>
