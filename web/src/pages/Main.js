@@ -37,6 +37,14 @@ function Main() {
     const getData = async () => {
         const res = await axios.get("/api/v1/data");
 
+        for(const d of res.data) {
+            d.ef_LV = (d.ef_LV * 100).toFixed(1);
+            d.ef_RV = (d.ef_RV * 100).toFixed(1);
+            d.ed_vol_LV = (d.ed_vol_LV).toFixed(1);
+            d.ed_vol_RV = (d.ed_vol_RV).toFixed(1);
+            d.ed_max_MTH = (d.ed_max_MTH).toFixed(1);
+        }
+
         setData(res.data);
 
         console.log("res.data", res.data)
@@ -89,10 +97,10 @@ function Main() {
     });
 
     const patientWithCondition = data.map((d) => {
-         if(operator === ">" && d[leftOperand] > rightOperand)
+         if(operator === ">" && parseFloat(d[leftOperand]) >= parseFloat(rightOperand))
              return d;
 
-        if(operator === "<" && d[leftOperand] < rightOperand)
+        if(operator === "<" && parseFloat(d[leftOperand]) <= parseFloat(rightOperand))
             return d;
 
         return null;
