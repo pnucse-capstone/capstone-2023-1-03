@@ -95,6 +95,7 @@ if __name__ == "__main__":
         tester = Tester(model, conf, model_path)
         results = []
         patients = []
+
         for test_data in final_test_data_path:
             base_folder = os.path.basename(test_data)
             print("test_data : %s" % test_data)

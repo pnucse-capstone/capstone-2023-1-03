@@ -41,7 +41,7 @@
 
 #### python 가상환경 설정
 ```
-conda create --name classifierVenv --file requirements.txt
+conda env create -f environment.yml
 ```
 가상환경의 이름을 classifierVenv로 생성합니다. (다른 이름을 사용할 경우 spring 동작에서 에러가 발생합니다.)
 

@@ -15,18 +15,16 @@ public class SegmentationService {
     public void segmentation(String patientNumber) {
         try {
             String segmentationPath = pythonLibPath + "/step1-segmentation/estimators/segmentation.py";
-            log.info("segmentation ... segmentationPath : {}", segmentationPath);
+            log.info("segmentation ... commend : {}", pythonLibPath + "/run_in_conda.sh python " + segmentationPath + " " + patientNumber);
 
-            Runtime runtime = Runtime.getRuntime();
-
-            Process process = runtime.exec("python " + segmentationPath + " " + patientNumber, null, new File(pythonLibPath + "/step1-segmentation/estimators"));
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                log.info(line);
+            ProcessBuilder pb = new ProcessBuilder(pythonLibPath + "/run_in_conda.sh", "python", segmentationPath, patientNumber);
+            pb.directory(new File(pythonLibPath + "/step1-segmentation/estimators"));
+            pb.inheritIO();
+            try {
+                Process process = pb.start();
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -38,16 +36,14 @@ public class SegmentationService {
             String segmentationResSplitPath = pythonLibPath + "/step1-segmentation/seg3class.py";
             log.info("segmentationResultSplit ... segmentationPath : {}", segmentationResSplitPath);
 
-            Runtime runtime = Runtime.getRuntime();
-
-            Process process = runtime.exec("python " + segmentationResSplitPath + " " + patientNumber, null, new File(pythonLibPath + "/step1-segmentation"));
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                log.info(line);
+            ProcessBuilder pb = new ProcessBuilder(pythonLibPath + "/run_in_conda.sh", "python", segmentationResSplitPath, patientNumber);
+            pb.directory(new File(pythonLibPath + "/step1-segmentation"));
+            pb.inheritIO();
+            try {
+                Process process = pb.start();
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

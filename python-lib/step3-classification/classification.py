@@ -6,6 +6,8 @@ from __future__ import print_function
 import numpy as np
 import os
 import subprocess
+import matplotlib
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import itertools
 import sys
@@ -13,8 +15,6 @@ import pandas as pd
 import joblib
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 from sklearn.ensemble import (RandomForestClassifier, ExtraTreesClassifier)
-
-import matplotlib.pyplot as plt
 from sklearn.metrics import confusion_matrix
 import sklearn
 from datetime import datetime

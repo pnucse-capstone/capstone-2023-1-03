@@ -6,7 +6,7 @@ from scipy.fftpack import fftn, ifftn
 import numpy as np
 try:
     import matplotlib
-    # matplotlib.use("TkAgg")
+    matplotlib.use("TkAgg")
     import matplotlib.pyplot as plt
     from matplotlib import animation
 except:

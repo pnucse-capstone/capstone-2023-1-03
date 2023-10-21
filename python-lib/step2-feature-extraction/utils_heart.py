@@ -6,7 +6,7 @@ import numpy as np
 import scipy
 from scipy import ndimage
 import matplotlib
-# matplotlib.use("TkAgg")
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import skimage
 from skimage import feature

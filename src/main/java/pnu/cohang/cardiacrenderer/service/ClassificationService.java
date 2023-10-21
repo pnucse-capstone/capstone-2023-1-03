@@ -27,16 +27,14 @@ public class ClassificationService {
             String classificationPath = pythonLibPath + "/step3-classification/classification.py";
             log.info("classification ... classificationPath : {}", classificationPath);
 
-            Runtime runtime = Runtime.getRuntime();
-
-            Process process = runtime.exec("python " + classificationPath + " " + patientNumber, null, new File(pythonLibPath + "/step3-classification"));
-            InputStream is = process.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String line;
-
-            while ((line = br.readLine()) != null) {
-                log.info(line);
+            ProcessBuilder pb = new ProcessBuilder(pythonLibPath + "/run_in_conda.sh", "python", classificationPath, patientNumber);
+            pb.directory(new File(pythonLibPath + "/step3-classification"));
+            pb.inheritIO();
+            try {
+                Process process = pb.start();
+                process.waitFor();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         } catch (IOException e) {
             throw new RuntimeException(e);

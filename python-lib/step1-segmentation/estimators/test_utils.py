@@ -7,6 +7,8 @@ import scipy.ndimage as snd
 import random
 from datetime import datetime
 import glob
+import matplotlib
+matplotlib.use("TkAgg")
 import matplotlib.pyplot as plt
 import SimpleITK as sitk
 import pandas as pd 
