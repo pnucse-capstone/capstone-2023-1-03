@@ -34,7 +34,7 @@
 
 ### 4. 소개 및 시연 영상
 
-[![부산대학교 정보컴퓨터공학부 소개](http://img.youtube.com/vi/zh_gQ_lmLqE/0.jpg)](https://youtu.be/zh_gQ_lmLqE)
+[![부산대학교 정보컴퓨터공학부 소개](https://img.youtube.com/vi/opF18loV1Rs/maxresdefault.jpg)](https://www.youtube.com/watch?v=opF18loV1Rs)
 
 ### 5. 설치 및 사용법
 본 프로젝트의 경우 Mac OS를 기준으로 환경설정이 이루어져있습니다.
